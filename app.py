@@ -1,66 +1,72 @@
 import streamlit as st
-from collections import Counter
 
-st.set_page_config(page_title="Creator Hooks Pro", page_icon="🎯", layout="wide")
-
+st.set_page_config(page_title="Creator Hooks", page_icon="🎯")
 st.title("🎯 Creator Hooks Pro")
-st.subheader("Gerador Inteligente de Títulos Virais para YouTube")
 
-PALAVRAS_DE_PODER = [
-    'secreto', 'segredo', 'revelado', 'descoberta', 'chocante', 'inacreditável',
-    'melhor', 'pior', 'impossível', 'viral', 'medo', 'dica', 'truque', 'hack',
-    'método', 'como', 'verdade', 'incrível', 'fantástico', 'realidade'
-]
+# Palavras poderosas
+poder = ['secreto', 'segredo', 'revelado', 'chocante', 'melhor', 'viral', 'incrível']
+curiosidade = ['verdade', 'por que', 'mistério', 'revelação', 'desvendado']
+medo = ['cuidado', 'perigo', 'aviso', 'grave', 'urgente']
+desejo = ['ganhar', 'sucesso', 'rápido', 'fácil', 'dinheiro']
 
-PALAVRAS_CURIOSIDADE = [
-    'segredo', 'descoberta', 'surpreendente', 'verdade', 'revelação', 'mistério',
-    'por que', 'o que', 'será', 'desvendado', 'choque', 'surpreender'
-]
-
-PALAVRAS_MEDO = [
-    'cuidado', 'atenção', 'perigo', 'risco', 'pior', 'nunca', 'horror',
-    'medo', 'aviso', 'antes que', 'errado', 'grave', 'urgente'
-]
-
-PALAVRAS_DESEJO = [
-    'melhor', 'ganhar', 'lucrar', 'rico', 'sucesso', 'crescer', 'aumentar',
-    'dinheiro', 'renda', 'liberdade', 'poder', 'fácil', 'rápido', 'simples',
-    'resultado', 'transformação', 'mudança', 'evolução'
-]
-
-def calcular_score(titulo):
-    score = 0
-    titulo_lower = titulo.lower()
+def score(titulo):
+    pontos = 0
+    t = titulo.lower()
     
     if 40 <= len(titulo) <= 65:
-        score += 200
-    
-    if any(p in titulo_lower for p in PALAVRAS_DE_PODER):
-        score += 300
-    
-    if any(p in titulo_lower for p in PALAVRAS_CURIOSIDADE):
-        score += 150
-    
-    if any(p in titulo_lower for p in PALAVRAS_MEDO):
-        score += 125
-    
-    if any(p in titulo_lower for p in PALAVRAS_DESEJO):
-        score += 125
-    
+        pontos += 200
+    if any(p in t for p in poder):
+        pontos += 300
+    if any(p in t for p in curiosidade):
+        pontos += 150
+    if any(p in t for p in medo):
+        pontos += 125
+    if any(p in t for p in desejo):
+        pontos += 125
     if any(c.isdigit() for c in titulo):
-        score += 100
-    
+        pontos += 100
     if '[' in titulo or '(' in titulo:
-        score += 50
-    
+        pontos += 50
     if '?' in titulo or '!' in titulo:
-        score += 75
+        pontos += 75
     
-    return min(1000, score)
+    return min(1000, pontos)
 
-def detectar_emocao(titulo):
-    titulo_lower = titulo.lower()
-    
-    curiosidade = sum(1 for p in PALAVRAS_CURIOSIDADE if p in titulo_lower)
-    medo = sum(1 for p in PALAVRAS_MEDO if p in titulo_lower)
-    desejo = sum(1 for p in PALAVRAS
+st.subheader("📝 Modo Um: Analisar Títulos")
+titulos = st.text_area("Cole seus títulos (um por linha):", height=120)
+
+if st.button("🔍 Analisar", key="analisa"):
+    if titulos:
+        lista = [t.strip() for t in titulos.split('\n') if t.strip()]
+        st.success(f"✅ {len(lista)} títulos analisados")
+        
+        for i, t in enumerate(lista[:5], 1):
+            st.write(f"**{i}. {t}** - Score: {score(t)}/1000")
+
+st.markdown("---")
+st.subheader("✨ Modo Dois: Gerar Títulos")
+
+tema = st.text_input("Digite o tema:")
+
+sugestoes = [
+    "Como {tema} em trinta dias",
+    "O Segredo de {tema} Revelado",
+    "{tema}: Verdade ou Mentira?",
+    "Você Está Fazendo {tema} Errado!",
+    "Cinco Dicas para {tema}",
+    "Antes de {tema}, Veja Isto",
+    "[IMPORTANTE] {tema} que Ninguém Sabe",
+    "Descubra o Segredo de {tema}",
+]
+
+if st.button("🎯 Gerar", key="gera"):
+    if tema:
+        st.success("✅ Títulos gerados!")
+        for i, sugestao in enumerate(sugestoes, 1):
+            titulo = sugestao.format(tema=tema)
+            st.write(f"**{i}. {titulo}** - Score: {score(titulo)}/1000")
+    else:
+        st.error("❌ Digite o tema!")
+
+st.markdown("---")
+st.caption("🚀 Creator Hooks Pro - Gerador de Títulos Virais")
