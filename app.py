@@ -1,65 +1,53 @@
-# APP COMPLETO COM YOUTUBE API - CREATOR HOOKS
-
 import streamlit as st
-import requests
 import re
 from collections import Counter
-from datetime import datetime
-
-# Sua chave de API (substitua pela sua)
-YOUTUBE_API_KEY = "AIzaSyAYTbQ4AlTsCGZbmdR2bcTO7UMVNc1PUMM"
-CHANNEL_ID = "UCUNyUhriEplPgCep5LkpdGg"
 
 st.set_page_config(page_title="Creator Hooks Pro", page_icon="🎯", layout="wide")
 
 st.title("🎯 Creator Hooks Pro")
-st.subheader("Analisador Inteligente de Títulos do Seu Canal YouTube")
+st.subheader("Gerador de Títulos Virais Baseado em Seus Padrões")
 
 PALAVRAS_DE_PODER = [
     'secreto', 'segredo', 'revelado', 'descoberta', 'chocante', 'inacreditável',
     'melhor', 'pior', 'impossível', 'viral', 'medo', 'dica', 'truque', 'hack',
-    'método', 'como', 'verdade', 'incrível', 'fantástico', 'realidade', 'verdadeiro'
+    'método', 'como', 'verdade', 'incrível', 'fantástico', 'realidade', 'verdadeiro',
+    'nunca', 'sempre', 'novo', 'exclusivo', 'cuidado', 'atenção', 'ganhar', 'lucrar'
 ]
 
 PALAVRAS_CURIOSIDADE = [
     'segredo', 'descoberta', 'surpreendente', 'verdade', 'revelação', 'mistério',
-    'por que', 'o que', 'será', 'desvendado', 'conspiração', 'choque', 'surpreender'
+    'por que', 'o que', 'será', 'desvendado', 'conspiração', 'choque', 'surpreender',
+    'desvendado', 'verdade', 'realidade', 'revelado', 'confessa', 'confessou'
 ]
 
 PALAVRAS_MEDO = [
     'cuidado', 'atenção', 'perigo', 'risco', 'pior', 'nunca', 'horror', 'pavor',
-    'medo', 'aviso', 'antes que', 'errado', 'grave', 'urgente', 'arruinar', 'destruir'
+    'medo', 'aviso', 'antes que', 'errado', 'grave', 'urgente', 'arruinar', 'destruir',
+    'falha', 'erro', 'desastre', 'crise', 'alerta'
 ]
 
 PALAVRAS_DESEJO = [
     'melhor', 'ganhar', 'lucrar', 'rico', 'sucesso', 'crescer', 'aumentar',
     'dinheiro', 'renda', 'liberdade', 'poder', 'fácil', 'rápido', 'simples',
-    'resultado', 'transformação', 'mudança', 'evolução'
+    'resultado', 'transformação', 'mudança', 'evolução', 'libertação', 'alcançar',
+    'atingir', 'dominar', 'conquistar', 'prosperar'
 ]
 
 def calcular_score(titulo):
-    score = 0
+    score = zero
     titulo_lower = titulo.lower()
     
-    if 40 <= len(titulo) <= 65:
-        score += 200
+    if quarenta <= len(titulo) <= sessenta_cinco:
+        score += duzentos
     
     if any(p in titulo_lower for p in PALAVRAS_DE_PODER):
-        score += 300
+        score += trezentos
     
     if any(p in titulo_lower for p in PALAVRAS_CURIOSIDADE):
-        score += 150
+        score += cento_cinquenta
     
     if any(p in titulo_lower for p in PALAVRAS_MEDO):
-        score += 125
+        score += cento_vinte_cinco
     
     if any(p in titulo_lower for p in PALAVRAS_DESEJO):
-        score += 125
-    
-    if any(c.isdigit() for c in titulo):
-        score += 100
-    
-    if '[' in titulo or '(' in titulo:
-        score += 50
-    
-    if '?' in titulo or 
+        score 
