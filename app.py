@@ -1,38 +1,65 @@
+# APP COMPLETO COM YOUTUBE API - CREATOR HOOKS
+
 import streamlit as st
+import requests
+import re
+from collections import Counter
+from datetime import datetime
 
-st.set_page_config(page_title="Creator Hooks", page_icon="🎯")
+# Sua chave de API (substitua pela sua)
+YOUTUBE_API_KEY = "AIzaSyAYTbQ4AlTsCGZbmdR2bcTO7UMVNc1PUMM"
+CHANNEL_ID = "UCUNyUhriEplPgCep5LkpdGg"
 
-st.title("🎯 Creator Hooks")
-st.subheader("Gerador Automático de Títulos Virais para YouTube")
+st.set_page_config(page_title="Creator Hooks Pro", page_icon="🎯", layout="wide")
 
-PALAVRAS_PODER = ['secreto', 'segredo', 'revelado', 'descoberta', 'chocante', 'melhor', 'pior', 'impossível', 'viral', 'medo']
+st.title("🎯 Creator Hooks Pro")
+st.subheader("Analisador Inteligente de Títulos do Seu Canal YouTube")
+
+PALAVRAS_DE_PODER = [
+    'secreto', 'segredo', 'revelado', 'descoberta', 'chocante', 'inacreditável',
+    'melhor', 'pior', 'impossível', 'viral', 'medo', 'dica', 'truque', 'hack',
+    'método', 'como', 'verdade', 'incrível', 'fantástico', 'realidade', 'verdadeiro'
+]
+
+PALAVRAS_CURIOSIDADE = [
+    'segredo', 'descoberta', 'surpreendente', 'verdade', 'revelação', 'mistério',
+    'por que', 'o que', 'será', 'desvendado', 'conspiração', 'choque', 'surpreender'
+]
+
+PALAVRAS_MEDO = [
+    'cuidado', 'atenção', 'perigo', 'risco', 'pior', 'nunca', 'horror', 'pavor',
+    'medo', 'aviso', 'antes que', 'errado', 'grave', 'urgente', 'arruinar', 'destruir'
+]
+
+PALAVRAS_DESEJO = [
+    'melhor', 'ganhar', 'lucrar', 'rico', 'sucesso', 'crescer', 'aumentar',
+    'dinheiro', 'renda', 'liberdade', 'poder', 'fácil', 'rápido', 'simples',
+    'resultado', 'transformação', 'mudança', 'evolução'
+]
 
 def calcular_score(titulo):
     score = 0
-    if 40 <= len(titulo) <= 65: score += 200
-    if any(p in titulo.lower() for p in PALAVRAS_PODER): score += 300
-    if '?' in titulo or '!' in titulo: score += 75
-    return min(1000, score)
-
-tipo_titulo = st.selectbox("Escolha o tipo:", ["Motivacional", "Educativo", "Histórias", "Tutorial", "Saúde", "Negócios", "Humor", "Tendências"])
-
-if st.button("🔍 Gerar Títulos"):
-    titulos = {
-        'Motivacional': ['Como Transformar Sua Vida em trinta dias', 'O Segredo que Ninguém te Contou', 'Você está Fazendo Errado. Aprenda Agora', 'Cinco Passos para Sucesso Garantido', 'A Verdade que Mudará Sua Perspectiva', 'Isto é Revolucionário', 'Antes que Seja Tarde, Veja Isto'],
-        'Educativo': ['Como Aprender Rápido: Guia Completo', 'Entenda de Uma Vez por Todas', 'Explicado em Dez Minutos', 'O Método Mais Eficaz Revelado', 'Domínio Total em Quarenta Minutos', 'Desvende o Mistério Agora', 'Tudo que Você Precisa Saber'],
-        'Histórias': ['A Verdade que Ninguém Sabia', 'Isso Que Aconteceu Vai te Chocar', 'Você não Acreditará no Final', 'Uma História que Mudou Tudo', 'O Segredo Está Revelado', 'Prepare-se: Revelação Chocante', 'Esse Final Vai te Deixar em Choque'],
-        'Tutorial': ['Como Fazer em Cinco Minutos', 'Método Infalível: Siga Agora', 'Passo a Passo Completo e Fácil', 'Resultado Garantido', 'Assim fica Muito Mais Fácil', 'Saiba Como Fazer Corretamente', 'Entenda a Técnica Profissional'],
-        'Saúde': ['Dez Hábitos que Mudam Sua Saúde', 'Médicos Escondem Esta Verdade', 'Como Viver Mais Saudável Agora', 'Isto Vai Mudar Sua Vida', 'O Que Ninguém Quer que Você Saiba', 'Antes de Tomar, Veja Isto', 'Segredo Centenário Revelado'],
-        'Negócios': ['Como Lucrar Cinco Mil por Mês', 'Empreendedor Revela Seu Segredo', 'De Zero a Herói em Noventa Dias', 'Isto Gera Dinheiro Passivo', 'Método Testado para Crescer Rápido', 'Erro Fatal que Custou Milhões', 'Você Pode Ganhar Assim Também'],
-        'Humor': ['Isto É Hilariante', 'Você Vai Morrer de Rir', 'Reação Verdadeira', 'Algo Extremamente Engraçado Aconteceu', 'Prepare-se para Rir Muito', 'Isso é Tão Ridículo', 'Confira a Parte Mais Divertida'],
-        'Tendências': ['A Tendência Viral que Explodiu', 'Todos Estão Fazendo Isto Agora', 'Viral: Milhões de Pessoas Assistindo', 'Isto É Bombando Neste Momento', 'Novo Desafio que Virou Febre', 'Resultado Surpreendente: Veja Agora', 'Isto Deixou a Internet em Choque']
-    }
+    titulo_lower = titulo.lower()
     
-    lista = titulos.get(tipo_titulo, [])
-    scored = [(t, calcular_score(t)) for t in lista]
-    scored.sort(key=lambda x: x[1], reverse=True)
+    if 40 <= len(titulo) <= 65:
+        score += 200
     
-    st.success("✅ Títulos gerados!")
-    for i, (titulo, score) in enumerate(scored, 1):
-        st.write(f"**{i}. {titulo}**")
-        st.caption(f"📊 Score: {score}/1000")
+    if any(p in titulo_lower for p in PALAVRAS_DE_PODER):
+        score += 300
+    
+    if any(p in titulo_lower for p in PALAVRAS_CURIOSIDADE):
+        score += 150
+    
+    if any(p in titulo_lower for p in PALAVRAS_MEDO):
+        score += 125
+    
+    if any(p in titulo_lower for p in PALAVRAS_DESEJO):
+        score += 125
+    
+    if any(c.isdigit() for c in titulo):
+        score += 100
+    
+    if '[' in titulo or '(' in titulo:
+        score += 50
+    
+    if '?' in titulo or 
